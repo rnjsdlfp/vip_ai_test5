@@ -5,8 +5,6 @@ import streamlit as st
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
     st.markdown("[Get an OpenAI API key](https://platform.openai.com/account/api-keys)")
-    st.markdown("[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)")
-    st.markdown("[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)")
 
 # Title and caption
 st.title("💬 VIP AI")
@@ -41,7 +39,7 @@ if prompt := st.chat_input():
 
     # Request response from ChatGPT model
     response = openai.ChatCompletion.create(
-        model="gpt-3.5-turbo",  # Replace "gpt-4o" with "gpt-3.5-turbo" or "gpt-4" if applicable
+        model="gpt-4o",  # Replace "gpt-4o" with "gpt-3.5-turbo" or "gpt-4" if applicable
         messages=messages
     )
 
