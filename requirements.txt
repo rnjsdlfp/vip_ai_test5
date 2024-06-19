@@ -1,5 +1,5 @@
 openai
-streamlit==1.10.0
-numpy==1.22.4
-pandas==1.4.2
+streamlit
+numpy
+pandas
 # Add other dependencies here
