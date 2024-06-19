@@ -1,5 +1,5 @@
-from openai import OpenAI
 import streamlit as st
+import openai
 
 # 사이드바에서 OpenAI API 키와 Assistant ID 입력받기
 with st.sidebar:
@@ -28,18 +28,19 @@ if prompt := st.chat_input():
         st.info("Please add the Assistant ID to continue.")
         st.stop()
 
-    client = OpenAI(api_key=openai_api_key)
+    openai.api_key = openai_api_key
+
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    # OpenAI API 호출하여 Assistant ID를 사용한 검색 수행
     try:
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=st.session_state["messages"],
-            user=assistant_id  # Assistant ID 사용
+        # Retrieval 기능을 위한 API 호출
+        response = openai.ChatCompletion.create(
+            model="gpt-4o",  # 모델 이름을 실제 사용 가능한 모델로 변경
+            messages=st.session_state.messages,
+            user=assistant_id  # 사용자 Assistant ID 사용
         )
-        msg = response.choices[0].message.content
+        msg = response['choices'][0]['message']['content']
         st.session_state.messages.append({"role": "assistant", "content": msg})
         st.chat_message("assistant").write(msg)
     except Exception as e:
