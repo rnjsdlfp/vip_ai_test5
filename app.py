@@ -34,14 +34,15 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     try:
-        # Retrieval 기능을 위한 API 호출
-        response = openai.ChatCompletion.create(
-            model="gpt-4o",  # 모델 이름을 실제 사용 가능한 모델로 변경
+        # 최신 API 호출을 위한 코드
+        response = openai.Chat.create(
+            model="gpt-4o",
             messages=st.session_state.messages,
-            user=assistant_id  # 사용자 Assistant ID 사용
+            user=assistant_id  # Assistant ID 사용
         )
-        msg = response['choices'][0]['message']['content']
+        msg = response.choices[0].message['content']
         st.session_state.messages.append({"role": "assistant", "content": msg})
         st.chat_message("assistant").write(msg)
     except Exception as e:
         st.error(f"Error: {e}")
+
