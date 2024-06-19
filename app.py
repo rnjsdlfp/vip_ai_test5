@@ -19,7 +19,6 @@ if prompt := st.chat_input():
         st.stop()
 
     client = OpenAI(api_key=openai_api_key)
-    assistant_id = "asst_Dlr6YRJen7llwFxT393E5noC"
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
     response = client.chat.completions.create(model="gpt-4o", messages=st.session_state.messages)
