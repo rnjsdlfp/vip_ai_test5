@@ -36,7 +36,7 @@ if prompt := st.chat_input():
     try:
         # 최신 API 호출을 위한 코드
         response = openai.ChatCompletion.create(
-            model="gpt-3.5-turbo",  # 사용 가능한 모델로 변경
+            model="gpt-4o",  # 사용 가능한 모델로 변경
             messages=st.session_state["messages"],
             user=assistant_id  # Assistant ID 사용
         )
@@ -45,4 +45,5 @@ if prompt := st.chat_input():
         st.chat_message("assistant").write(msg)
     except Exception as e:
         st.error(f"Error: {e}")
+
 
