@@ -1,50 +1,27 @@
-import openai
+from openai import OpenAI
 import streamlit as st
 
-# Sidebar for API key input
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-    st.markdown("[Get an OpenAI API key](https://platform.openai.com/account/api-keys)")
+    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
 
-# Title and caption
 st.title("💬 VIP AI")
-st.caption("🚀 A Streamlit chatbot powered by OpenAI")
-
-# Initialize messages if not in session state
+st.caption("🚀 A Streamlit chatbot powered by OpenAI & Jireh")
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
-# Display chat messages
 for msg in st.session_state.messages:
     st.chat_message(msg["role"]).write(msg["content"])
 
-# Handle user input
 if prompt := st.chat_input():
     if not openai_api_key:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
 
-    # Initialize OpenAI client
-    openai.api_key = openai_api_key
-
-    # Add user message to session state
+    client = OpenAI(api_key=openai_api_key)
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
-
-    # Prepare messages for the API call
-    messages = [
-        {"role": msg["role"], "content": msg["content"]}
-        for msg in st.session_state.messages
-    ]
-
-    # Request response from ChatGPT model
-    response = openai.ChatCompletion.create(
-        model="gpt-4o",  # Replace "gpt-4o" with "gpt-3.5-turbo" or "gpt-4" if applicable
-        messages=messages
-    )
-
-    # Extract and display assistant's response
-    msg = response['choices'][0]['message']['content']
+    response = client.chat.completions.create(model="gpt-4o", messages=st.session_state.messages)
+    msg = response.choices[0].message.content
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
-
