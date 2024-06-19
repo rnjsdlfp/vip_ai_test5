@@ -33,14 +33,20 @@ if prompt := st.chat_input():
     st.session_state.messages.append({"role": "user", "content": prompt})
     st.chat_message("user").write(prompt)
 
-    # Request response from ChatGPT-4o model
+    # Prepare messages for the API call
+    messages = [
+        {"role": msg["role"], "content": msg["content"]}
+        for msg in st.session_state.messages
+    ]
+
+    # Request response from ChatGPT model
     response = openai.ChatCompletion.create(
-        model="gpt-4o",  # Use ChatGPT-4o model
-        messages=st.session_state.messages
+        model="gpt-3.5-turbo",  # Replace "gpt-4o" with "gpt-3.5-turbo" or "gpt-4" if applicable
+        messages=messages
     )
 
     # Extract and display assistant's response
     msg = response['choices'][0]['message']['content']
     st.session_state.messages.append({"role": "assistant", "content": msg})
     st.chat_message("assistant").write(msg)
-  
+
