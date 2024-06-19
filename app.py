@@ -34,10 +34,10 @@ if prompt := st.chat_input():
     st.chat_message("user").write(prompt)
 
     try:
-        # 최신 API 호출을 위한 코드
-        response = openai.Chat.create(
+        # OpenAI API 호출하여 Assistant ID를 사용한 검색 수행
+        response = openai.ChatCompletion.create(
             model="gpt-4o",
-            messages=st.session_state.messages,
+            messages=st.session_state["messages"],
             user=assistant_id  # Assistant ID 사용
         )
         msg = response.choices[0].message['content']
@@ -45,4 +45,3 @@ if prompt := st.chat_input():
         st.chat_message("assistant").write(msg)
     except Exception as e:
         st.error(f"Error: {e}")
-
