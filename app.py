@@ -1,49 +1,59 @@
-import streamlit as st
 import openai
+import streamlit as st
 
-# 사이드바에서 OpenAI API 키와 Assistant ID 입력받기
+# Sidebar for API key input
 with st.sidebar:
     openai_api_key = st.text_input("OpenAI API Key", key="chatbot_api_key", type="password")
-    assistant_id = st.text_input("Assistant ID", key="assistant_id")
-    "[Get an OpenAI API key](https://platform.openai.com/account/api-keys)"
+    st.markdown("[Get an OpenAI API key](https://platform.openai.com/account/api-keys)")
+    st.markdown("[View the source code](https://github.com/streamlit/llm-examples/blob/main/Chatbot.py)")
+    st.markdown("[![Open in GitHub Codespaces](https://github.com/codespaces/badge.svg)](https://codespaces.new/streamlit/llm-examples?quickstart=1)")
 
+# Title and caption
 st.title("💬 VIP AI")
-st.caption("🚀 A Streamlit chatbot powered by OpenAI & Jireh")
+st.caption("🚀 A Streamlit chatbot powered by OpenAI")
 
-# 초기 메시지 설정
+# Initialize messages if not in session state
 if "messages" not in st.session_state:
     st.session_state["messages"] = [{"role": "assistant", "content": "How can I help you?"}]
 
-# 기존 메시지 출력
+# Display chat messages
 for msg in st.session_state.messages:
-    st.chat_message(msg["role"]).write(msg["content"])
+    role = "user" if msg["role"] == "user" else "assistant"
+    st.write(f"**{role.capitalize()}:** {msg['content']}")
 
-# 사용자 입력 처리
-if prompt := st.chat_input():
+# Handle user input
+prompt = st.text_input("Your message:", "")
+if st.button("Send"):
     if not openai_api_key:
         st.info("Please add your OpenAI API key to continue.")
         st.stop()
 
-    if not assistant_id:
-        st.info("Please add the Assistant ID to continue.")
-        st.stop()
-
-    openai.api_key = openai_api_key
-
-    st.session_state.messages.append({"role": "user", "content": prompt})
-    st.chat_message("user").write(prompt)
-
     try:
-        # 최신 API 호출을 위한 코드
+        # Initialize OpenAI client
+        openai.api_key = openai_api_key
+
+        # Add user message to session state
+        st.session_state.messages.append({"role": "user", "content": prompt})
+        st.write(f"**User:** {prompt}")
+
+        # Prepare messages for the API call
+        messages = [
+            {"role": msg["role"], "content": msg["content"]}
+            for msg in st.session_state.messages
+        ]
+
+        # Request response from ChatGPT model
         response = openai.ChatCompletion.create(
-            model="gpt-4o",  # 사용 가능한 모델로 변경
-            messages=st.session_state["messages"],
-            user=assistant_id  # Assistant ID 사용
+            model="gpt-3.5-turbo",  # Replace "gpt-4o" with "gpt-3.5-turbo" or "gpt-4" if applicable
+            messages=messages
         )
-        msg = response.choices[0].message['content']
+
+        # Extract and display assistant's response
+        msg = response['choices'][0]['message']['content']
         st.session_state.messages.append({"role": "assistant", "content": msg})
-        st.chat_message("assistant").write(msg)
+        st.write(f"**Assistant:** {msg}")
+
     except Exception as e:
-        st.error(f"Error: {e}")
+        st.error(f"An error occurred: {e}")
 
 
